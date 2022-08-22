@@ -1,8 +1,6 @@
 // In the preload script.
 const { ipcRenderer, dialog, contextBridge } = require('electron')
 
-const fs = require('fs');
-
 let mediaRecorder;
 const recordedChunks = [];
 
@@ -53,12 +51,7 @@ async function handleStop(e) {
 
     const buffer = Buffer.from(await blob.arrayBuffer());
 
-    ipcRenderer.send('save-dialog', true)
-    ipcRenderer.on('write-now', (ev, filePath) => {
-      fs.writeFile(filePath, buffer, () => {
-        console.log('saved!')
-      })
-    })
+    ipcRenderer.send('save-dialog', buffer)
 
 }
 
@@ -81,10 +74,3 @@ contextBridge.exposeInMainWorld('electroApi', {
     }
 
 })
-
-// ipcRenderer.on('write-signal', (filePath) => {
-  // console.log('got the signal back, about to write with', filePath)
-  // writeFile(filePath, data, () => {
-  //   console.log('saved!')
-  // })
-// })

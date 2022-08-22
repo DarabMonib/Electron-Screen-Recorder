@@ -15,8 +15,6 @@ const createWindow = () => {
     height: 500,
     autoHideMenuBar: true,
     webPreferences: {
-      contextIsolation: true,
-      nodeIntegration: true,
       preload: path.join(__dirname, 'preload.js'),
     },
     enableRemoteModule: true,
@@ -37,7 +35,7 @@ const createWindow = () => {
     }
   })
 
-  ipcMain.on('save-dialog', (bool) => {
+  ipcMain.on('save-dialog', (ev, buffer) => {
 
     async function saveDialog() {
   
@@ -45,8 +43,9 @@ const createWindow = () => {
         buttonLabel: 'Save',
         defaultPath: `recording-${Date.now()}.webm`
       })
-  
-      mainWindow.webContents.send('write-now', filePath)
+      writeFile(filePath, buffer, () => {
+        console.log('saved!')
+      })
   
     }
     saveDialog()
